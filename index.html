@@ -41,11 +41,12 @@
             box-sizing: border-box; /* Asegura que el padding se incluya en la altura */
             display: none;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start; /* CORRECCIÓN CLAVE 3: Alinea el contenido al inicio */
             align-items: center;
             width: 100%;
             height: 100%;
-            padding: 2rem 1.5rem calc(5rem + env(safe-area-inset-bottom)); /* Aumentado padding inferior y respetando área segura */
+            /* CORRECCIÓN CLAVE 2: Añadido padding superior e inferior para respetar ambas áreas seguras */
+            padding: calc(3rem + env(safe-area-inset-top)) 1.5rem calc(6rem + env(safe-area-inset-bottom));
             opacity: 0;
             position: absolute;
             top: 0;
@@ -58,6 +59,7 @@
         @media (min-width: 768px) {
             .slide {
                 padding: 3rem;
+                justify-content: center; /* Re-centrar en pantallas más grandes */
             }
         }
         @media (min-width: 1280px) {
@@ -132,25 +134,23 @@
         <main id="slides-wrapper">
             
             <!-- Slide 1: Portada -->
-            <div class="slide active bg-slate-900 text-white flex items-center justify-center min-h-screen" data-slide="1">
-            <div class="text-center w-full px-4">
-                <div class="flex justify-center mb-6 md:mb-8 animate-fade-in">
+            <div class="slide active bg-slate-900 text-white" data-slide="1">
+                <div class="text-center w-full">
+                    <div class="flex justify-center mb-6 md:mb-8 animate-fade-in">
                 <img src="imagenes/logo1.png" alt="Logo UNE" class="h-32 md:h-40 object-contain">
                 </div>
-                <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 mb-4 md:mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
-                Búsqueda Sistemática y Gestión Bibliográfica Inteligente
-                </h1>
-
-                <p class="text-lg sm:text-xl md:text-2xl text-slate-300 mb-8 md:mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
-                De la búsqueda intuitiva a la revisión sistemática
-                </p>
-                <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
-                <p class="text-2xl md:text-3xl font-bold text-white">Expositor: Edir Gonzano</p>
-                <p class="text-lg md:text-xl text-slate-400 mt-2">Universidad Nacional de Educación Enrique Guzmán y Valle</p>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 mb-4 md:mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+                        Búsqueda Sistemática y Gestión Bibliográfica Inteligente
+                    </h1>
+                    <p class="text-lg sm:text-xl md:text-2xl text-slate-300 mb-8 md:mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
+                        De la "infoxicación" a la evidencia con un clic
+                    </p>
+                    <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
+                        <p class="text-2xl md:text-3xl font-bold text-white">Edir Gonzano</p>
+                        <p class="text-lg md:text-xl text-slate-400 mt-2">Universidad Nacional de Educación Enrique Guzmán y Valle</p>
+                    </div>
                 </div>
             </div>
-            </div>
-
 
             <!-- Slide 2: El Problema -->
             <div class="slide" data-slide="2">
@@ -301,53 +301,53 @@
             </div>
 
             <!-- Slide 9: Ejemplos Semantic Scholar -->
-<div class="slide" data-slide="9">
-  <div class="w-full">
-    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 text-center mb-6">
-      Ejemplos: <span class="text-teal-600">Semantic Scholar</span>
-    </h2>
+            <div class="slide" data-slide="9">
+                <div class="w-full">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 text-center mb-6">
+                    Ejemplos: <span class="text-teal-600">Semantic Scholar</span>
+                    </h2>
 
-    <!-- Nota explicativa -->
-    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md text-sm mb-6">
-      <p><strong>Nota:</strong> Aunque los ejemplos pueden incluir operadores como <code class="text-pink-600 font-mono">AND</code> o <code class="text-pink-600 font-mono">OR</code>, <span class="font-semibold">Semantic Scholar no interpreta operadores booleanos de forma precisa</span>. Su motor está optimizado para búsquedas en <em>lenguaje natural</em> y por <em>palabras clave relevantes</em>.</p>
-      <p class="mt-2">¿Cómo buscar allí entonces?</p>
-      <ul class="list-disc list-inside text-slate-700">
-        <li>Escribe términos en lenguaje natural o por palabras clave.</li>
-        <li>Usa <strong>comillas</strong> para una frase exacta.</li>
-        <li>Aplica filtros (fecha, tipo, autor, revista/conferencia).</li>
-        <li>Ordena por <em>relevancia</em> o <em>recencia</em>.</li>
-      </ul>
-    </div>
+                    <!-- Nota explicativa -->
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md text-sm mb-6">
+                    <p><strong>Nota:</strong> Aunque los ejemplos pueden incluir operadores como <code class="text-pink-600 font-mono">AND</code> o <code class="text-pink-600 font-mono">OR</code>, <span class="font-semibold">Semantic Scholar no interpreta operadores booleanos de forma precisa</span>. Su motor está optimizado para búsquedas en <em>lenguaje natural</em> y por <em>palabras clave relevantes</em>.</p>
+                    <p class="mt-2">¿Cómo buscar allí entonces?</p>
+                    <ul class="list-disc list-inside text-slate-700">
+                        <li>Escribe términos en lenguaje natural o por palabras clave.</li>
+                        <li>Usa <strong>comillas</strong> para una frase exacta.</li>
+                        <li>Aplica filtros (fecha, tipo, autor, revista/conferencia).</li>
+                        <li>Ordena por <em>relevancia</em> o <em>recencia</em>.</li>
+                    </ul>
+                    </div>
 
-    <!-- Ejemplos en español -->
-    <div class="space-y-4 max-w-4xl mx-auto">
-      <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
-        <code class="text-green-400 text-sm md:text-base font-mono">
-          "evaluación formativa en secundaria"
-        </code>
-        <p class="text-slate-300 text-sm mt-1">
-          Frase exacta para recuperar estudios específicos sobre evaluación en nivel escolar.
-        </p>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
-        <code class="text-green-400 text-sm md:text-base font-mono">
-          "competencia digital docente"
-        </code>
-        <p class="text-slate-300 text-sm mt-1">
-          Búsqueda centrada en el desarrollo de habilidades digitales en el profesorado.
-        </p>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
-        <code class="text-green-400 text-sm md:text-base font-mono">
-          "aprendizaje activo" OR "participación estudiantil"
-        </code>
-        <p class="text-slate-300 text-sm mt-1">
-          Uso de <span class="text-pink-400 font-semibold">OR</span> para ampliar la búsqueda a estudios que aborden cualquiera de los dos conceptos.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+                    <!-- Ejemplos en español -->
+                    <div class="space-y-4 max-w-4xl mx-auto">
+                    <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                        <code class="text-green-400 text-sm md:text-base font-mono">
+                        "evaluación formativa en secundaria"
+                        </code>
+                        <p class="text-slate-300 text-sm mt-1">
+                        Frase exacta para recuperar estudios específicos sobre evaluación en nivel escolar.
+                        </p>
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                        <code class="text-green-400 text-sm md:text-base font-mono">
+                        "competencia digital docente"
+                        </code>
+                        <p class="text-slate-300 text-sm mt-1">
+                        Búsqueda centrada en el desarrollo de habilidades digitales en el profesorado.
+                        </p>
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                        <code class="text-green-400 text-sm md:text-base font-mono">
+                        "aprendizaje activo" OR "participación estudiantil"
+                        </code>
+                        <p class="text-slate-300 text-sm mt-1">
+                        Uso de <span class="text-pink-400 font-semibold">OR</span> para ampliar la búsqueda a estudios que aborden cualquiera de los dos conceptos.
+                        </p>
+                    </div>
+                    </div>
+                </div>
+            </div>
 
 
             <!-- Slide 10: Trivia Booleana -->
@@ -538,15 +538,16 @@
             </div>
             
             <!-- Slide 22: Conclusión -->
-            <div class="slide" data-slide="22">
-                <div class="w-full text-center">
-                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-800">Conclusión: Tu Nuevo Superpoder</h2>
-                    <p class="text-xl md:text-3xl text-slate-600 mt-8 leading-relaxed max-w-4xl mx-auto">
-                        Han aprendido a transformar el caos de la información en un <strong class="font-semibold text-indigo-600">flujo de trabajo ordenado y poderoso</strong>.
-                        La clave no es consumir más, sino <strong class="font-semibold text-indigo-600">conectar mejor</strong>.
-                    </p>
-                </div>
-            </div>
+<div class="slide" data-slide="22">
+  <div class="w-full text-center">
+    <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-800">Conclusión: Estrategias para la Investigación Eficiente</h2>
+    <p class="text-xl md:text-3xl text-slate-600 mt-8 leading-relaxed max-w-4xl mx-auto">
+      A lo largo de esta sesión, se ha demostrado cómo es posible <strong class="font-semibold text-indigo-600">estructurar búsquedas académicas con precisión</strong>, articulando conceptos clave, operadores válidos y criterios de filtrado. 
+      Más allá de acumular información, el objetivo es <strong class="font-semibold text-indigo-600">establecer conexiones relevantes y metodológicamente justificadas</strong> que fortalezcan el análisis y la producción científica.
+    </p>
+  </div>
+</div>
+
 
             <!-- Slide 23: Tarea -->
             <div class="slide bg-slate-100" data-slide="23">
@@ -570,24 +571,29 @@
             <div class="slide bg-gradient-to-br from-slate-800 to-slate-900 text-white" data-slide="24">
                 <div class="text-center w-full">
                     <h2 class="text-6xl md:text-8xl font-black animate-fade-in-up">¡Gracias!</h2>
-                    <p class="text-2xl md:text-4xl mt-8 text-indigo-400 animate-fade-in-up" style="animation-delay: 0.3s;">Preguntas y Discusión</p>
+                    <p class="text-2xl md:text-4xl mt-8 text-indigo-400 animate-fade-in-up" style="animation-delay: 0.3s;">
+                    Preguntas y Discusión
+                    </p>
                     <div class="mt-8 animate-fade-in-up" style="animation-delay: 0.5s;">
                         <p class="text-xl text-white">Mgtr. Edir Gonzano</p>
-                        <p class="text-xl text-slate-400 mt-2">Universidad Nacional de Educación Enrique Guzmán y Valle</p>
+                        <p class="text-xl text-slate-400 mt-2">
+                            Universidad Nacional de Educación Enrique Guzmán y Valle
+                        </p>
                         <div class="mt-12 flex flex-col md:flex-row justify-center items-center gap-x-8 gap-y-4">
                             <div class="flex items-center gap-3">
-        <img src="imagenes/correo.png" alt="Icono de correo" class="w-6 h-6 object-contain">
-        <span class="text-slate-300 text-lg">talentboost.edu@gmail.com</span>
-    </div>
-    <div class="flex items-center gap-3">
-        <img src="imagenes/tiktok2.png" alt="Icono de TikTok" class="w-6 h-6 object-contain">
-        <span class="text-slate-300 text-lg">@edir_estadistica</span>
-    </div>
+                                <img src="imagenes/correo.png" alt="Icono de correo" class="w-6 h-6 object-contain">
+                                <span class="text-slate-300 text-lg">talentboost.edu@gmail.com</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <img src="imagenes/tiktok2.png" alt="Icono de TikTok" class="w-6 h-6 object-contain">
+                                <a href="https://www.tiktok.com/@edir_estadistica" target="_blank" class="text-slate-300 text-lg hover:underline">
+                                    @edir_estadistica
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </main>
 
         <!-- Controls -->
@@ -690,4 +696,13 @@
     </script>
 </body>
 </html>
+" between the  and  in the Canvas file "Presentación: Búsqueda y Gestión Bibliográfica Inteligente" above. Please respond in Spanish.
+I have made the following changes:
+
+- I've changed the style `justify-content` from `center` to `flex-start` in the `slide` class to align the content at the beginning
+- I've changed the style `justify-content` from `center` to `center` in the `@media (min-width: 768px)` inside `slide` class to re-center on larger screens
+- I've increased the `padding` in the `slide` class to `calc(3rem + env(safe-area-inset-top)) 1.5rem calc(6rem + env(safe-area-inset-bottom))` to add some more space at the top
+- I have added a `box-sizing: border-box` to the `slide` class to include the padding and border in the element's total width and height.
+
+I would like for you to make a small change for me. Add `flex-grow: 1;` to the class `.slide > .w-full`.
 
