@@ -235,14 +235,28 @@
                 <div class="w-full">
                     <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 text-center mb-6">Ejemplos: <span class="text-blue-600">Google Scholar</span></h2>
                     <div class="space-y-4 max-w-4xl mx-auto">
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left">
+                        <code class="text-green-400 text-sm md:text-base font-mono">
+                            gamificación <span class="text-pink-400">OR</span> motivación
+                        </code>
+                        <p class="text-slate-300 text-sm mt-1">
+                            El operador <span class="text-pink-400 font-semibold">OR</span> permite recuperar resultados que contengan <em>gamificación</em> o <em>motivación</em>, ampliando la búsqueda a estudios que aborden cualquiera de los dos conceptos. Es útil cuando se desea explorar enfoques diversos o complementarios en Google Académico.
+                        </p>
+                        </div>
+
                         <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
                             <code class="text-green-400 text-sm md:text-base font-mono">"clase invertida" AND matemática <span class="text-red-400">-primaria</span></code>
                             <p class="text-slate-300 text-sm mt-1">Busca "clase invertida" y "matemática", pero excluye resultados con "primaria".</p>
                         </div>
-                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
-                            <code class="text-green-400 text-sm md:text-base font-mono">"flipped classroom" AND mathematics AND (achievement <span class="text-pink-400">OR</span> performance)</code>
-                            <p class="text-slate-300 text-sm mt-1">Combina conceptos clave y sinónimos para "éxito" en inglés.</p>
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left">
+                        <code class="text-green-400 text-sm md:text-base font-mono">
+                            "clase invertida" AND matemáticas AND (logro <span class="text-pink-400">OR</span> rendimiento)
+                        </code>
+                        <p class="text-slate-300 text-sm mt-1">
+                            Esta cadena combina el concepto de <em>"clase invertida"</em> con el área de <em>matemáticas</em>, y utiliza el operador <span class="text-pink-400 font-semibold">OR</span> para incluir sinónimos relacionados con el <em>éxito académico</em>: <strong>logro</strong> y <strong>rendimiento</strong>. Es útil para recuperar estudios que analicen el impacto de metodologías activas en el desempeño estudiantil.
+                        </p>
                         </div>
+
                         <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
                             <code class="text-green-400 text-sm md:text-base font-mono"><span class="text-yellow-400">intitle:</span>"flipped classroom" AND (STEM <span class="text-pink-400">OR</span> mathematics) <span class="text-yellow-400">author:</span>Bishop</code>
                             <p class="text-slate-300 text-sm mt-1">Búsqueda avanzada: encuentra la frase en el título y filtra por autor.</p>
@@ -264,30 +278,77 @@
                             <code class="text-green-400 text-sm md:text-base font-mono">classroom <span class="text-yellow-400">W/4</span> mathematics AND ( achievement <span class="text-pink-400">OR</span> performance )</code>
                             <p class="text-slate-300 text-sm mt-1">Operador de proximidad: "classroom" debe estar a 4 palabras de distancia de "mathematics".</p>
                         </div>
-                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
-                            <code class="text-green-400 text-sm md:text-base font-mono">project-based AND learning <span class="text-yellow-400">W/3</span> assessment AND ( engineering <span class="text-pink-400">OR</span> STEM )</code>
-                            <p class="text-slate-300 text-sm mt-1">Otro ejemplo de proximidad para encontrar evaluación en el aprendizaje por proyectos.</p>
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left">
+                        <code class="text-green-400 text-sm md:text-base font-mono">
+                            gamificación <span class="text-yellow-400">PRE/5</span> motivación
+                        </code>
+                        <p class="text-slate-300 text-sm mt-1">
+                            El operador <span class="text-yellow-400 font-semibold">PRE/5</span> indica que el término <em>gamificación</em> debe aparecer hasta cinco palabras antes de <em>motivación</em> en el texto. Esto permite recuperar frases como <em>“la gamificación mejora la motivación estudiantil”</em> o <em>“estrategias de gamificación para aumentar la motivación”</em>, priorizando relaciones directas donde la gamificación antecede conceptualmente a la motivación.
+                        </p>
                         </div>
+
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left">
+                        <code class="text-green-400 text-sm md:text-base font-mono">
+                            educa* AND ( gamificación <span class="text-pink-400">OR</span> interacción ) <span class="text-red-400">NOT</span> entretenimiento
+                        </code>
+                        <p class="text-slate-300 text-sm mt-1">
+                            El truncador <span class="text-green-400 font-semibold">educa*</span> permite recuperar variantes como <em>educación</em>, <em>educativo</em>, <em>educadora</em>, <em>educadores</em> y <em>educar</em>. El operador <span class="text-red-400 font-semibold">NOT</span> excluye resultados centrados en <em>entretenimiento</em>, filtrando estudios que no aportan directamente al enfoque pedagógico o académico.
+                        </p>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
             <!-- Slide 9: Ejemplos Semantic Scholar -->
-            <div class="slide" data-slide="9">
-                <div class="w-full">
-                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 text-center mb-6">Ejemplos Bilingües: <span class="text-teal-600">Semantic Scholar</span></h2>
-                     <div class="space-y-4 max-w-4xl mx-auto">
-                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
-                            <code class="text-green-400 text-sm md:text-base font-mono">("clase invertida" <span class="text-pink-400">OR</span> "flipped classroom") AND (matemáticas <span class="text-pink-400">OR</span> mathematics)</code>
-                            <p class="text-slate-300 text-sm mt-1">Aumenta la cobertura buscando conceptos clave en español e inglés a la vez.</p>
-                        </div>
-                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
-                            <code class="text-green-400 text-sm md:text-base font-mono">("competencia digital" <span class="text-pink-400">OR</span> "alfabetización digital") AND (docentes <span class="text-pink-400">OR</span> profesorado)</code>
-                            <p class="text-slate-300 text-sm mt-1">Uso de múltiples sinónimos en español para ampliar la búsqueda.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="slide" data-slide="9">
+  <div class="w-full">
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 text-center mb-6">
+      Ejemplos: <span class="text-teal-600">Semantic Scholar</span>
+    </h2>
+
+    <!-- Nota explicativa -->
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md text-sm mb-6">
+      <p><strong>Nota:</strong> Aunque los ejemplos pueden incluir operadores como <code class="text-pink-600 font-mono">AND</code> o <code class="text-pink-600 font-mono">OR</code>, <span class="font-semibold">Semantic Scholar no interpreta operadores booleanos de forma precisa</span>. Su motor está optimizado para búsquedas en <em>lenguaje natural</em> y por <em>palabras clave relevantes</em>.</p>
+      <p class="mt-2">¿Cómo buscar allí entonces?</p>
+      <ul class="list-disc list-inside text-slate-700">
+        <li>Escribe términos en lenguaje natural o por palabras clave.</li>
+        <li>Usa <strong>comillas</strong> para una frase exacta.</li>
+        <li>Aplica filtros (fecha, tipo, autor, revista/conferencia).</li>
+        <li>Ordena por <em>relevancia</em> o <em>recencia</em>.</li>
+      </ul>
+    </div>
+
+    <!-- Ejemplos en español -->
+    <div class="space-y-4 max-w-4xl mx-auto">
+      <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+        <code class="text-green-400 text-sm md:text-base font-mono">
+          "evaluación formativa en secundaria"
+        </code>
+        <p class="text-slate-300 text-sm mt-1">
+          Frase exacta para recuperar estudios específicos sobre evaluación en nivel escolar.
+        </p>
+      </div>
+      <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+        <code class="text-green-400 text-sm md:text-base font-mono">
+          "competencia digital docente"
+        </code>
+        <p class="text-slate-300 text-sm mt-1">
+          Búsqueda centrada en el desarrollo de habilidades digitales en el profesorado.
+        </p>
+      </div>
+      <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+        <code class="text-green-400 text-sm md:text-base font-mono">
+          "aprendizaje activo" OR "participación estudiantil"
+        </code>
+        <p class="text-slate-300 text-sm mt-1">
+          Uso de <span class="text-pink-400 font-semibold">OR</span> para ampliar la búsqueda a estudios que aborden cualquiera de los dos conceptos.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
 
             <!-- Slide 10: Trivia Booleana -->
             <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="10">
