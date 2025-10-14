@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Presentación: Búsqueda Sistemática y Gestión Bibliográfica Inteligente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos Base Optimizados - SOLUCIÓN MÓVIL APLICADA */
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+            overflow: hidden; /* Previene el scroll en la página principal */
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f8fafc;
+        }
+
+        #presentation-container {
+            width: 100%;
+            height: 100vh; /* Usamos 100vh para la altura base */
+            height: 100dvh; /* CORRECCIÓN CLAVE: Usamos 'dvh' (Dynamic Viewport Height) que se ajusta a la UI del navegador móvil */
+            display: flex;
+            flex-direction: column;
+            background-color: #f9fafb;
+        }
+
+        /* Contenedor de diapositivas */
+        #slides-wrapper {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Estructura de diapositivas responsiva */
+        .slide {
+            box-sizing: border-box; /* Asegura que el padding se incluya en la altura */
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 2rem 1.5rem calc(5rem + env(safe-area-inset-bottom)); /* Aumentado padding inferior y respetando área segura */
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.6s ease-in-out;
+            background-color: #f9fafb;
+            overflow-y: auto;
+        }
+        
+        @media (min-width: 768px) {
+            .slide {
+                padding: 3rem;
+            }
+        }
+        @media (min-width: 1280px) {
+            .slide {
+                padding: 3rem 5rem;
+            }
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            z-index: 10;
+        }
+
+        /* Animaciones (sin cambios) */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes expandWidth { from { width: 0; } to { width: 100%; } }
+        .active .animate-fade-in { animation: fadeIn 0.8s ease-in-out forwards; }
+        .active .animate-fade-in-up { animation: fadeInUp 0.8s ease-in-out forwards; }
+        .active .animate-expand { animation: expandWidth 1s ease-in-out forwards; }
+        .active .stagger-children > * { opacity: 0; animation: fadeInUp 0.7s ease-out forwards; }
+        .active .stagger-children > *:nth-child(1) { animation-delay: 0.2s; }
+        .active .stagger-children > *:nth-child(2) { animation-delay: 0.4s; }
+        .active .stagger-children > *:nth-child(3) { animation-delay: 0.6s; }
+        .active .stagger-children > *:nth-child(4) { animation-delay: 0.8s; }
+
+        /* Flip Card (sin cambios) */
+        .flip-card { background-color: transparent; width: 100%; perspective: 1000px; cursor: pointer; min-height: 180px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s; transform-style: preserve-3d; }
+        .flip-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 1.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .flip-card-back { transform: rotateY(180deg); }
+        
+        /* Trivia Cards (sin cambios) */
+        .trivia-card .flip-card-front { background-color: #1e293b; border: 2px solid #475569; color: #cbd5e1; font-size: 1.25rem; line-height: 1.75rem; transition: all 0.3s ease; }
+        .trivia-card:hover .flip-card-front { border-color: #4f46e5; box-shadow: 0 0 15px 2px rgb(79 70 229 / 0.6); color: #fff; }
+        .trivia-card .flip-card-back.correct { background-color: #166534; border: 2px solid #22c55e; color: #fff; }
+        .trivia-card .flip-card-back.incorrect { background-color: #991b1b; border: 2px solid #ef4444; color: #fff; }
+        .feedback-icon { width: 2.5rem; height: 2.5rem; margin-top: 0.5rem; }
+
+        /* Controles - SOLUCIÓN MÓVIL APLICADA */
+        #controls-container {
+            position: fixed;
+            bottom: calc(1rem + env(safe-area-inset-bottom)); /* Respeta el área segura de iPhones */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+        @media (min-width: 768px) {
+            #controls-container { 
+                right: 20px; 
+                bottom: 20px; 
+                left: auto; 
+                transform: none; 
+            }
+        }
+        .controls { background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); padding: 0.5rem; border-radius: 9999px; display: flex; align-items: center; gap: 0.5rem; }
+        .control-btn { color: #334155; border-radius: 9999px; padding: 0.5rem; transition: background-color 0.3s; }
+        .control-btn:hover { background-color: #e2e8f0; }
+        .control-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .control-btn:disabled:hover { background-color: transparent; }
+        .control-btn svg { width: 1.5rem; height: 1.5rem; }
+        #slide-counter { font-size: 1rem; font-weight: 700; color: #334155; width: 4rem; text-align: center; }
+        @media (min-width: 768px) { #slide-counter { font-size: 1.1rem; width: 5rem;} }
+    </style>
+</head>
+<body>
+
+    <div id="presentation-container">
+        <!-- Slides Wrapper -->
+        <main id="slides-wrapper">
+            
+            <!-- Slide 1: Portada -->
+            <div class="slide active bg-slate-900 text-white flex items-center justify-center min-h-screen" data-slide="1">
+            <div class="text-center w-full px-4">
+                <div class="flex justify-center mb-6 md:mb-8 animate-fade-in">
+                <img src="imagenes/logo1.png" alt="Logo UNE" class="h-32 md:h-40 object-contain">
+                </div>
+                <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 mb-4 md:mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+                Búsqueda Sistemática y Gestión Bibliográfica Inteligente
+                </h1>
+
+                <p class="text-lg sm:text-xl md:text-2xl text-slate-300 mb-8 md:mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
+                De la búsqueda intuitiva a la revisión sistemática
+                </p>
+                <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
+                <p class="text-2xl md:text-3xl font-bold text-white">Expositor: Edir Gonzano</p>
+                <p class="text-lg md:text-xl text-slate-400 mt-2">Universidad Nacional de Educación Enrique Guzmán y Valle</p>
+                </div>
+            </div>
+            </div>
+
+
+            <!-- Slide 2: El Problema -->
+            <div class="slide" data-slide="2">
+                <div class="w-full text-center">
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-800 mb-4 animate-fade-in-up">Vivimos en un océano de información...</h2>
+                    <div class="w-20 h-2 bg-red-500 my-6 md:my-8 animate-expand mx-auto"></div>
+                    <p class="text-xl sm:text-2xl md:text-3xl text-slate-600 max-w-4xl leading-relaxed animate-fade-in-up" style="animation-delay: 0.3s;">
+                        ...pero encontrar la <strong class="font-semibold text-red-600">gota de conocimiento</strong> que necesitamos es el verdadero desafío.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Slide 3: Sección 1 Título -->
+            <div class="slide bg-gradient-to-br from-slate-800 to-slate-900 text-white" data-slide="3">
+                <div class="text-center w-full">
+                    <p class="text-xl md:text-3xl text-indigo-400 font-semibold animate-fade-in">Parte I</p>
+                    <h2 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mt-4 animate-fade-in-up">La Búsqueda Sistemática</h2>
+                    <p class="text-2xl md:text-3xl text-slate-300 mt-6 animate-fade-in-up" style="animation-delay: 0.2s;">Dónde y cómo encontrar tesoros académicos.</p>
+                </div>
+            </div>
+            
+            <!-- Slide 4: Bases de Datos Clave -->
+            <div class="slide" data-slide="4">
+                <div class="w-full text-center">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800 mb-10">Nuestros Aliados: Las Bases de Datos</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 stagger-children max-w-6xl mx-auto">
+                        <div class="bg-white p-6 rounded-2xl shadow-lg border-t-8 border-blue-500">
+                            <h3 class="font-bold text-slate-800 text-2xl mb-4">Google Scholar</h3>
+                            <p class="text-slate-600">El más <strong class="font-semibold">amplio y accesible</strong>. Ideal para una primera exploración y literatura gris.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-lg border-t-8 border-orange-500">
+                            <h3 class="font-bold text-slate-800 text-2xl mb-4">Scopus</h3>
+                            <p class="text-slate-600">Base de datos curada por expertos. Perfecta para <strong class="font-semibold">revisiones sistemáticas</strong> y métricas de impacto.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-lg border-t-8 border-teal-500">
+                            <h3 class="font-bold text-slate-800 text-2xl mb-4">Semantic Scholar</h3>
+                            <p class="text-slate-600">Usa <strong class="font-semibold">Inteligencia Artificial</strong> para resumir y encontrar artículos influyentes. Un "asistente" de búsqueda.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Operadores Booleanos -->
+            <div class="slide" data-slide="5">
+                <div class="w-full">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800 text-center mb-8">La Magia de la Búsqueda Booleana ✨</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center max-w-5xl mx-auto stagger-children">
+                        <div class="bg-blue-100 p-6 rounded-xl">
+                            <h3 class="font-bold text-blue-800 text-4xl">AND</h3>
+                            <p class="mt-2 text-blue-700 text-lg"><strong>Menos resultados, más precisión.</strong> Busca documentos que contengan AMBOS términos. (Ej: gamificación AND educación)</p>
+                        </div>
+                        <div class="bg-green-100 p-6 rounded-xl">
+                            <h3 class="font-bold text-green-800 text-4xl">OR</h3>
+                            <p class="mt-2 text-green-700 text-lg"><strong>Más resultados.</strong> Busca documentos con CUALQUIERA de los términos. Ideal para sinónimos. (Ej: niños OR infantes)</p>
+                        </div>
+                        <div class="bg-red-100 p-6 rounded-xl">
+                            <h3 class="font-bold text-red-800 text-4xl">NOT / -</h3>
+                            <p class="mt-2 text-red-700 text-lg"><strong>Excluye términos.</strong> Elimina documentos que contengan una palabra específica. (Ej: primaria NOT universidad)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 6: Ejemplo Práctico General -->
+            <div class="slide" data-slide="6">
+                <div class="w-full text-center">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800">¡A la práctica! Construyamos una búsqueda</h2>
+                    <p class="text-xl md:text-2xl mt-4 text-slate-600 max-w-3xl mx-auto">Queremos investigar sobre el uso de la gamificación o el aprendizaje basado en juegos en la educación primaria.</p>
+                    <div class="bg-slate-800 p-6 w-full max-w-4xl mx-auto my-8 rounded-lg shadow-inner text-left">
+                        <code class="text-green-400 text-lg md:text-2xl font-mono leading-relaxed">
+                            <span class="text-white">(</span><span class="text-cyan-400">gamificación</span> <span class="text-pink-400">OR</span> <span class="text-cyan-400">"aprendizaje basado en juegos"</span><span class="text-white">)</span> <span class="text-pink-400">AND</span> <span class="text-cyan-400">"educación primaria"</span>
+                        </code>
+                    </div>
+                    <p class="text-lg md:text-xl text-slate-600 max-w-4xl mx-auto">
+                        <strong>Tip Pro:</strong> Usa comillas "" para buscar frases exactas y paréntesis () para agrupar términos con OR.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide 7: Ejemplos Google Scholar -->
+            <div class="slide" data-slide="7">
+                <div class="w-full">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 text-center mb-6">Ejemplos: <span class="text-blue-600">Google Scholar</span></h2>
+                    <div class="space-y-4 max-w-4xl mx-auto">
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                            <code class="text-green-400 text-sm md:text-base font-mono">"clase invertida" AND matemática <span class="text-red-400">-primaria</span></code>
+                            <p class="text-slate-300 text-sm mt-1">Busca "clase invertida" y "matemática", pero excluye resultados con "primaria".</p>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                            <code class="text-green-400 text-sm md:text-base font-mono">"flipped classroom" AND mathematics AND (achievement <span class="text-pink-400">OR</span> performance)</code>
+                            <p class="text-slate-300 text-sm mt-1">Combina conceptos clave y sinónimos para "éxito" en inglés.</p>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                            <code class="text-green-400 text-sm md:text-base font-mono"><span class="text-yellow-400">intitle:</span>"flipped classroom" AND (STEM <span class="text-pink-400">OR</span> mathematics) <span class="text-yellow-400">author:</span>Bishop</code>
+                            <p class="text-slate-300 text-sm mt-1">Búsqueda avanzada: encuentra la frase en el título y filtra por autor.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 8: Ejemplos Scopus -->
+            <div class="slide" data-slide="8">
+                <div class="w-full">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 text-center mb-6">Ejemplos Avanzados: <span class="text-orange-600">Scopus</span></h2>
+                    <div class="space-y-4 max-w-4xl mx-auto">
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                            <code class="text-green-400 text-sm md:text-base font-mono">("teacher training" <span class="text-pink-400">OR</span> "teacher education") AND "mathematics" AND "gamification"</code>
+                            <p class="text-slate-300 text-sm mt-1">Combinando sinónimos para formación docente con otros conceptos clave.</p>
+                        </div>
+                         <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                            <code class="text-green-400 text-sm md:text-base font-mono">classroom <span class="text-yellow-400">W/4</span> mathematics AND ( achievement <span class="text-pink-400">OR</span> performance )</code>
+                            <p class="text-slate-300 text-sm mt-1">Operador de proximidad: "classroom" debe estar a 4 palabras de distancia de "mathematics".</p>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                            <code class="text-green-400 text-sm md:text-base font-mono">project-based AND learning <span class="text-yellow-400">W/3</span> assessment AND ( engineering <span class="text-pink-400">OR</span> STEM )</code>
+                            <p class="text-slate-300 text-sm mt-1">Otro ejemplo de proximidad para encontrar evaluación en el aprendizaje por proyectos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 9: Ejemplos Semantic Scholar -->
+            <div class="slide" data-slide="9">
+                <div class="w-full">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 text-center mb-6">Ejemplos Bilingües: <span class="text-teal-600">Semantic Scholar</span></h2>
+                     <div class="space-y-4 max-w-4xl mx-auto">
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                            <code class="text-green-400 text-sm md:text-base font-mono">("clase invertida" <span class="text-pink-400">OR</span> "flipped classroom") AND (matemáticas <span class="text-pink-400">OR</span> mathematics)</code>
+                            <p class="text-slate-300 text-sm mt-1">Aumenta la cobertura buscando conceptos clave en español e inglés a la vez.</p>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-lg shadow-inner text-left overflow-x-auto">
+                            <code class="text-green-400 text-sm md:text-base font-mono">("competencia digital" <span class="text-pink-400">OR</span> "alfabetización digital") AND (docentes <span class="text-pink-400">OR</span> profesorado)</code>
+                            <p class="text-slate-300 text-sm mt-1">Uso de múltiples sinónimos en español para ampliar la búsqueda.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 10: Trivia Booleana -->
+            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="10">
+                <div class="w-full max-w-5xl mx-auto text-center">
+                    <p class="text-lg md:text-2xl font-bold text-indigo-400">Trivia Rápida (1/3)</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold my-6 md:my-8">¿Qué operador usarías para encontrar artículos sobre "lectura" o "escritura"?</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">AND</div><div class="flip-card-back incorrect"><p class="text-2xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">OR</div><div class="flip-card-back correct"><p class="text-2xl font-bold">¡Correcto!</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div></div></div>
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">NOT</div><div class="flip-card-back incorrect"><p class="text-2xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 11: IA como Co-piloto -->
+            <div class="slide" data-slide="11">
+                <div class="w-full text-center">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800">Usa la IA como tu <span class="text-indigo-600">Co-piloto</span> de Investigación 🤖</h2>
+                     <p class="text-xl md:text-2xl mt-6 text-slate-600 max-w-4xl mx-auto">
+                        Pide a una IA (como Gemini, ChatGPT o Perplexity) que te ayude a...
+                    </p>
+                    <ul class="text-lg md:text-xl space-y-4 list-disc list-inside mt-8 text-slate-700 max-w-2xl mx-auto text-left stagger-children">
+                        <li>Generar <strong class="font-semibold">palabras clave</strong> y sinónimos.</li>
+                        <li>Construir <strong class="font-semibold">cadenas de búsqueda</strong> booleanas complejas.</li>
+                        <li>Encontrar <strong class="font-semibold">autores de referencia</strong> en un campo específico.</li>
+                        <li>Traducir tu pregunta de investigación a <strong class="font-semibold">términos técnicos</strong> en inglés.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Slide 12: Sección 2 Título -->
+            <div class="slide bg-gradient-to-br from-purple-700 to-violet-900 text-white" data-slide="12">
+                <div class="text-center w-full">
+                    <p class="text-xl md:text-3xl text-purple-200 font-semibold animate-fade-in">Parte II</p>
+                    <h2 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mt-4 animate-fade-in-up">La Gestión Inteligente</h2>
+                    <p class="text-2xl md:text-3xl text-slate-300 mt-6 animate-fade-in-up" style="animation-delay: 0.2s;">De la acumulación a la conexión.</p>
+                </div>
+            </div>
+
+            <!-- Slide 13: Zotero -->
+            <div class="slide" data-slide="13">
+                <div class="w-full grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-4xl sm:text-5xl font-extrabold text-slate-800">Zotero: Tu Biblioteca Personal Digital</h2>
+                        <p class="mt-6 text-xl text-slate-600 leading-relaxed">Es un gestor de referencias <strong class="font-semibold text-purple-700">gratuito y de código abierto</strong> que te permite:</p>
+                         <ul class="mt-4 text-lg space-y-2 list-disc list-inside text-slate-600">
+                            <li>Capturar referencias y PDFs con un clic.</li>
+                            <li>Organizar tu bibliografía en colecciones.</li>
+                            <li>Citar y crear bibliografías automáticamente en Word y Google Docs.</li>
+                        </ul>
+                    </div>
+                    <div class="flex justify-center">
+                        <img src="imagenes/zotero.png" alt="Logo de Zotero" class="w-64 h-64 animate-fade-in">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 14: Flujo Zotero -->
+            <div class="slide" data-slide="14">
+                <div class="w-full text-center">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800 mb-10">El Flujo de Trabajo Mágico con Zotero</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto stagger-children">
+                        <div class="flex flex-col items-center p-4">
+                            <div class="bg-purple-200 text-purple-800 rounded-full w-20 h-20 flex items-center justify-center text-3xl font-bold mb-4">1</div>
+                            <h3 class="text-2xl font-bold text-slate-700 mb-2">Captura</h3>
+                            <p class="text-slate-600">Usa el conector del navegador para guardar cualquier artículo, libro o web en tu biblioteca.</p>
+                        </div>
+                        <div class="flex flex-col items-center p-4">
+                             <div class="bg-purple-200 text-purple-800 rounded-full w-20 h-20 flex items-center justify-center text-3xl font-bold mb-4">2</div>
+                            <h3 class="text-2xl font-bold text-slate-700 mb-2">Organiza</h3>
+                            <p class="text-slate-600">Crea carpetas, añade etiquetas y escribe notas para encontrar tus fuentes fácilmente.</p>
+                        </div>
+                        <div class="flex flex-col items-center p-4">
+                            <div class="bg-purple-200 text-purple-800 rounded-full w-20 h-20 flex items-center justify-center text-3xl font-bold mb-4">3</div>
+                            <h3 class="text-2xl font-bold text-slate-700 mb-2">Cita</h3>
+                            <p class="text-slate-600">Mientras escribes, inserta citas y genera tu bibliografía en el formato que quieras (APA, Vancouver, etc.).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+             <!-- Slide 15: Trivia Zotero -->
+            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="15">
+                <div class="w-full max-w-5xl mx-auto text-center">
+                    <p class="text-lg md:text-2xl font-bold text-indigo-400">Trivia Rápida (2/3)</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold my-6 md:my-8">La principal ventaja de Zotero al escribir un documento es:</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Leer PDFs más rápido.</div><div class="flip-card-back incorrect"><p class="text-2xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Automatizar citas y bibliografías.</div><div class="flip-card-back correct"><p class="text-2xl font-bold">¡Exacto!</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div></div></div>
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Traducir artículos.</div><div class="flip-card-back incorrect"><p class="text-2xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                         <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Encontrar errores gramaticales.</div><div class="flip-card-back incorrect"><p class="text-2xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 16: ResearchRabbit -->
+            <div class="slide" data-slide="16">
+                <div class="w-full text-center">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800">ResearchRabbit: La Búsqueda como <span class="text-teal-600">Mapa de Conexiones</span></h2>
+                    <p class="text-xl md:text-2xl mt-6 text-slate-600 max-w-4xl mx-auto">
+                        En lugar de listas, esta herramienta te muestra la literatura como una <strong class="font-semibold">red de ideas interconectadas</strong>. Es ideal para:
+                    </p>
+                    <ul class="text-lg md:text-xl space-y-3 list-none mt-8 text-slate-700 max-w-md mx-auto text-left stagger-children">
+                        <li>🗺️ Descubrir visualmente artículos relacionados.</li>
+                        <li>🕰️ Ver cómo ha evolucionado un campo de estudio.</li>
+                        <li>🔔 Recibir alertas de nueva investigación relevante.</li>
+                    </ul>
+                     <p class="text-lg mt-6 text-slate-500 max-w-4xl mx-auto">¡Se sincroniza con tu biblioteca de Zotero!</p>
+                </div>
+            </div>
+            
+            <!-- Slide 17: Scimago -->
+            <div class="slide" data-slide="17">
+                <div class="w-full text-center">
+                     <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800">Scimago: Un Vistazo a la Calidad de las Revistas</h2>
+                      <p class="text-xl md:text-2xl mt-6 text-slate-600 max-w-4xl mx-auto">
+                        Scimago Journal & Country Rank te ayuda a evaluar el impacto de una revista clasificándola en cuartiles (Q).
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8 max-w-5xl mx-auto stagger-children">
+                        <div class="bg-green-600 text-white p-6 rounded-lg text-center"><h3 class="text-4xl font-black">Q1</h3><p>Top 25%</p></div>
+                        <div class="bg-yellow-500 text-white p-6 rounded-lg text-center"><h3 class="text-4xl font-black">Q2</h3><p>25-50%</p></div>
+                        <div class="bg-orange-500 text-white p-6 rounded-lg text-center"><h3 class="text-4xl font-black">Q3</h3><p>50-75%</p></div>
+                        <div class="bg-red-600 text-white p-6 rounded-lg text-center"><h3 class="text-4xl font-black">Q4</h3><p>Bottom 25%</p></div>
+                    </div>
+                     <p class="text-lg mt-6 text-slate-500 max-w-4xl mx-auto">Es un indicador útil, pero recuerda: <strong class="font-semibold">un gran artículo puede estar en cualquier revista.</strong></p>
+                </div>
+            </div>
+
+            <!-- Slide 18: Notebook -->
+            <div class="slide" data-slide="18">
+                <div class="w-full">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800 text-center">Tu "Notebook": De Lector Pasivo a Investigador Activo</h2>
+                    <p class="text-xl md:text-2xl mt-6 text-slate-600 max-w-4xl mx-auto text-center">
+                        Leer no es suficiente. Debemos <strong class="font-semibold text-purple-700">dialogar con el texto</strong>. Usa las herramientas de notas (en Zotero o tu app preferida) para:
+                    </p>
+                    <ul class="text-lg md:text-xl space-y-4 list-disc list-inside mt-8 text-slate-700 max-w-2xl mx-auto text-left stagger-children">
+                        <li><strong class="font-semibold">Resumir</strong> la idea principal en tus propias palabras.</li>
+                        <li><strong class="font-semibold">Cuestionar</strong> las afirmaciones del autor.</li>
+                        <li><strong class="font-semibold">Conectar</strong> ideas con otros artículos que has leído.</li>
+                        <li><strong class="font-semibold">Anotar</strong> citas clave que podrías usar en tu trabajo.</li>
+                    </ul>
+                </div>
+            </div>
+            
+             <!-- Slide 19: Sección 3 Título -->
+            <div class="slide bg-gradient-to-br from-teal-600 to-green-800 text-white" data-slide="19">
+                <div class="text-center w-full">
+                    <p class="text-xl md:text-3xl text-teal-200 font-semibold animate-fade-in">Parte III</p>
+                    <h2 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black mt-4 animate-fade-in-up">Integrando el Flujo de Trabajo</h2>
+                </div>
+            </div>
+
+            <!-- Slide 20: El Flujo Completo -->
+            <div class="slide" data-slide="20">
+                <div class="w-full text-center">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800 mb-10">El Ecosistema Completo de Investigación</h2>
+                     <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 max-w-7xl mx-auto stagger-children text-slate-700">
+                        <div class="bg-gray-200 p-4 rounded-full text-sm sm:text-base">Idea/Pregunta</div>
+                        <div class="text-2xl">→</div>
+                        <div class="bg-indigo-200 p-4 rounded-full text-sm sm:text-base">IA (Keywords)</div>
+                        <div class="text-2xl">→</div>
+                        <div class="bg-blue-200 p-4 rounded-full text-sm sm:text-base">Bases de Datos</div>
+                        <div class="text-2xl">→</div>
+                        <div class="bg-red-200 p-4 rounded-full text-sm sm:text-base">Zotero (Captura)</div>
+                        <div class="text-2xl hidden sm:block">→</div>
+                        <div class="bg-teal-200 p-4 rounded-full text-sm sm:text-base">ResearchRabbit</div>
+                        <div class="text-2xl">→</div>
+                        <div class="bg-purple-200 p-4 rounded-full text-sm sm:text-base">Lectura/Notas</div>
+                         <div class="text-2xl">→</div>
+                        <div class="bg-green-200 p-4 rounded-full text-sm sm:text-base">Escribir y Citar</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 21: Trivia Final -->
+            <div class="slide bg-gradient-to-br from-slate-900 to-slate-800 text-white" data-slide="21">
+                <div class="w-full max-w-5xl mx-auto text-center">
+                    <p class="text-lg md:text-2xl font-bold text-indigo-400">Trivia Rápida (3/3)</p>
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold my-6 md:my-8">¿Qué herramienta es mejor para explorar VISUALMENTE las conexiones entre artículos?</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Zotero</div><div class="flip-card-back incorrect"><p class="text-2xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Google Scholar</div><div class="flip-card-back incorrect"><p class="text-2xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">ResearchRabbit</div><div class="flip-card-back correct"><p class="text-2xl font-bold">¡Genial!</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div></div></div>
+                        <div class="flip-card trivia-card" onclick="this.classList.toggle('is-flipped')"><div class="flip-card-inner"><div class="flip-card-front">Scimago</div><div class="flip-card-back incorrect"><p class="text-2xl font-bold">Incorrecto</p><svg class="feedback-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div></div></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 22: Conclusión -->
+            <div class="slide" data-slide="22">
+                <div class="w-full text-center">
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-800">Conclusión: Tu Nuevo Superpoder</h2>
+                    <p class="text-xl md:text-3xl text-slate-600 mt-8 leading-relaxed max-w-4xl mx-auto">
+                        Han aprendido a transformar el caos de la información en un <strong class="font-semibold text-indigo-600">flujo de trabajo ordenado y poderoso</strong>.
+                        La clave no es consumir más, sino <strong class="font-semibold text-indigo-600">conectar mejor</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide 23: Tarea -->
+            <div class="slide bg-slate-100" data-slide="23">
+                 <div class="w-full text-center">
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-800">🚀 Tarea para la Casa</h2>
+                    <p class="text-xl md:text-2xl mt-6 text-slate-600 max-w-3xl mx-auto">
+                        Para aplicar lo aprendido, tienen la siguiente asignación. La fecha de entrega es en dos semanas.
+                    </p>
+                    <div class="mt-8 text-left max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+                        <ol class="list-decimal list-inside space-y-4 text-lg text-slate-700">
+                           <li>Elige un <strong class="font-semibold text-indigo-600">tema de investigación</strong> de tu área de especialidad.</li>
+                           <li>Crea una <strong class="font-semibold text-indigo-600">biblioteca en Zotero</strong> con al menos 10 artículos relevantes sobre tu tema, encontrados usando las técnicas de búsqueda vistas hoy.</li>
+                           <li>Escribe un <strong class="font-semibold text-indigo-600">resumen de 200 palabras</strong> sobre el estado actual de la investigación en ese tema, basándote en los artículos que encontraste.</li>
+                           <li>Envía tu resumen y un export de tu biblioteca de Zotero al correo proporcionado.</li>
+                        </ol>
+                    </div>
+                 </div>
+            </div>
+
+            <!-- Slide 24: Final -->
+            <div class="slide bg-gradient-to-br from-slate-800 to-slate-900 text-white" data-slide="24">
+                <div class="text-center w-full">
+                    <h2 class="text-6xl md:text-8xl font-black animate-fade-in-up">¡Gracias!</h2>
+                    <p class="text-2xl md:text-4xl mt-8 text-indigo-400 animate-fade-in-up" style="animation-delay: 0.3s;">Preguntas y Discusión</p>
+                    <div class="mt-8 animate-fade-in-up" style="animation-delay: 0.5s;">
+                        <p class="text-xl text-white">Mgtr. Edir Gonzano</p>
+                        <p class="text-xl text-slate-400 mt-2">Universidad Nacional de Educación Enrique Guzmán y Valle</p>
+                        <div class="mt-12 flex flex-col md:flex-row justify-center items-center gap-x-8 gap-y-4">
+                            <div class="flex items-center gap-3">
+        <img src="imagenes/correo.png" alt="Icono de correo" class="w-6 h-6 object-contain">
+        <span class="text-slate-300 text-lg">talentboost.edu@gmail.com</span>
+    </div>
+    <div class="flex items-center gap-3">
+        <img src="imagenes/tiktok2.png" alt="Icono de TikTok" class="w-6 h-6 object-contain">
+        <span class="text-slate-300 text-lg">@edir_estadistica</span>
+    </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Controls -->
+        <div id="controls-container">
+            <div class="controls">
+                <button id="prev-btn" class="control-btn" aria-label="Diapositiva anterior">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <div id="slide-counter">1 / 24</div>
+                <button id="next-btn" class="control-btn" aria-label="Siguiente diapositiva">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+                <button id="fullscreen-btn" class="control-btn" aria-label="Modo presentación">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 1v4m0 0h-4m4 0l-5-5"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const presentationContainer = document.getElementById('presentation-container');
+        const slidesWrapper = document.getElementById('slides-wrapper');
+
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+
+        function updateSlide() {
+            // Ocultar la diapositiva anterior
+            const oldSlide = slidesWrapper.querySelector('.active');
+            if (oldSlide) {
+                oldSlide.classList.remove('active');
+                // Reiniciar tarjetas interactivas
+                oldSlide.querySelectorAll('.flip-card.is-flipped').forEach(card => {
+                    card.classList.remove('is-flipped');
+                });
+            }
+            
+            // Mostrar la diapositiva actual
+            slides[currentSlide].classList.add('active');
+            
+            // Actualizar contador y estado de botones
+            slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+
+        function showNextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function showPrevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                presentationContainer.requestFullscreen().catch(err => {
+                    console.error(`Error al intentar activar el modo de pantalla completa: ${err.message} (${err.name})`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Event Listeners
+        nextBtn.addEventListener('click', showNextSlide);
+        prevBtn.addEventListener('click', showPrevSlide);
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                showNextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                showPrevSlide();
+            } else if (e.key.toLowerCase() === 'f') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        });
+
+        // Inicializar la primera diapositiva
+        updateSlide(); 
+    });
+    </script>
+</body>
+</html>
+
